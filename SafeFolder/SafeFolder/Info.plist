@@ -18,13 +18,13 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>We use Face ID to unlock your secure folders.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We use the camera to let you take photos and save them securely.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We use your photo library so you can select and securely save existing photos.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>We use Face ID to unlock your secure folders.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We need access to save photos to your library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We use your photo library so you can select and securely save existing photos.</string>
 </dict>
 </plist>
