@@ -15,10 +15,20 @@ struct FolderListView: View {
     @State private var showingCreateFolder = false
     
     // Auth State
+    enum AuthAction {
+        case open
+        case removeSecurity
+    }
+    
     @State private var selectedFolderToUnlock: Folder?
     @State private var showPasswordAlert = false
     @State private var passwordInput = ""
     @State private var showAuthError = false
+    @State private var pendingAuthAction: AuthAction = .open
+    
+    // Conversion State
+    @State private var folderToConvert: Folder?
+    @State private var showConvertSheet = false
     
     var body: some View {
         Group {
@@ -54,15 +64,14 @@ struct FolderListView: View {
                             
                             if folder.isSecure {
                                 Button {
-                                    // TODO: Implement Security Removal in Step 32
-                                    print("Remove Security")
+                                    initiateRemoveSecurity(folder)
                                 } label: {
                                     Label("Remove Security", systemImage: "lock.open")
                                 }
                             } else {
                                 Button {
-                                    // TODO: Implement Make Secure in Step 31
-                                    print("Make Secure")
+                                    folderToConvert = folder
+                                    showConvertSheet = true
                                 } label: {
                                     Label("Make Secure", systemImage: "lock")
                                 }
@@ -94,6 +103,9 @@ struct FolderListView: View {
         .sheet(isPresented: $showingCreateFolder) {
             CreateFolderView()
         }
+        .sheet(item: $folderToConvert) { folder in
+            ConvertFolderView(folder: folder)
+        }
         .alert("Enter Password", isPresented: $showPasswordAlert) {
             SecureField("Password", text: $passwordInput)
             Button("Cancel", role: .cancel) { passwordInput = "" }
@@ -111,16 +123,26 @@ struct FolderListView: View {
     // MARK: - Navigation & Authentication
     
     private func openFolder(_ folder: Folder) {
+        pendingAuthAction = .open
         if !folder.isSecure || folderStore.isFolderUnlocked(folder.id) {
             path.append(folder)
         } else {
-            selectedFolderToUnlock = folder
-            if folder.authenticationType == .biometric {
-                authenticateBiometric(for: folder)
-            } else if folder.authenticationType == .password {
-                passwordInput = ""
-                showPasswordAlert = true
-            }
+            promptAuth(for: folder)
+        }
+    }
+    
+    private func initiateRemoveSecurity(_ folder: Folder) {
+        pendingAuthAction = .removeSecurity
+        promptAuth(for: folder)
+    }
+    
+    private func promptAuth(for folder: Folder) {
+        selectedFolderToUnlock = folder
+        if folder.authenticationType == .biometric {
+            authenticateBiometric(for: folder)
+        } else if folder.authenticationType == .password {
+            passwordInput = ""
+            showPasswordAlert = true
         }
     }
     
@@ -129,8 +151,7 @@ struct FolderListView: View {
         
         let savedPassword = KeychainService.shared.getPassword(forFolderId: folder.id)
         if passwordInput == savedPassword {
-            folderStore.unlockFolder(folder.id)
-            path.append(folder)
+            handleSuccessfulAuth(for: folder)
         } else {
             showAuthError = true
         }
@@ -139,16 +160,33 @@ struct FolderListView: View {
     
     private func authenticateBiometric(for folder: Folder) {
         Task {
-            let success = await BiometricAuthService.shared.authenticate(reason: "Unlock \(folder.name)")
+            let success = await BiometricAuthService.shared.authenticate(reason: "Authenticate for \(folder.name)")
             await MainActor.run {
                 if success {
-                    folderStore.unlockFolder(folder.id)
-                    path.append(folder)
+                    handleSuccessfulAuth(for: folder)
                 } else {
                     showAuthError = true
                 }
             }
         }
+    }
+    
+    private func handleSuccessfulAuth(for folder: Folder) {
+        folderStore.unlockFolder(folder.id)
+        
+        if pendingAuthAction == .open {
+            path.append(folder)
+        } else if pendingAuthAction == .removeSecurity {
+            removeSecurity(from: folder)
+        }
+    }
+    
+    private func removeSecurity(from folder: Folder) {
+        if folder.authenticationType == .password {
+            try? KeychainService.shared.deletePassword(forFolderId: folder.id)
+        }
+        let updatedFolder = folder.withoutSecurity()
+        folderStore.updateFolder(updatedFolder)
     }
 }
 

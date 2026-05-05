@@ -25,6 +25,7 @@
 		BFFB067153CD5A783315C2DC /* FileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B23BBDB4B8C131863DF5810 /* FileItem.swift */; };
 		DE73C02BAF778409AC1853C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA769936954D61F4579EC206 /* Assets.xcassets */; };
 		E3E70D1D5708E2D601EC2E8C /* BiometricAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04C1E73AD8A1A3831C9CCA35 /* BiometricAuthService.swift */; };
+		EFCB8EE7F6C1A2D7BC3EB30F /* ConvertFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D29977FA60C7B9E04C2E1C /* ConvertFolderView.swift */; };
 		F1569236279FCEDA832A6E8D /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389F112DD1EBBFA48BBF6A29 /* StorageService.swift */; };
 		F3A04362DB0C1D6F1C87510D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7807220AA310A42AB191142 /* ContentView.swift */; };
 /* End PBXBuildFile section */
@@ -39,6 +40,7 @@
 		47DEFE3FDDEB029F317779CC /* FolderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListView.swift; sourceTree = "<group>"; };
 		4B952CD222D2E8B716CB3C8F /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		65A0A15239EABF8F6F138D38 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		79D29977FA60C7B9E04C2E1C /* ConvertFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertFolderView.swift; sourceTree = "<group>"; };
 		90351D6EEC94DC14061B4757 /* FolderStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderStore.swift; sourceTree = "<group>"; };
 		9B23BBDB4B8C131863DF5810 /* FileItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
 		B646C8C20C8A179EE0802002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 		566C30BD2660B7E41AB0C68C /* FolderCreation */ = {
 			isa = PBXGroup;
 			children = (
+				79D29977FA60C7B9E04C2E1C /* ConvertFolderView.swift */,
 				CB6A65EC72BC751B3C3D942C /* CreateFolderView.swift */,
 			);
 			path = FolderCreation;
@@ -259,6 +262,7 @@
 			files = (
 				E3E70D1D5708E2D601EC2E8C /* BiometricAuthService.swift in Sources */,
 				F3A04362DB0C1D6F1C87510D /* ContentView.swift in Sources */,
+				EFCB8EE7F6C1A2D7BC3EB30F /* ConvertFolderView.swift in Sources */,
 				42DB05B491F25A6B606A4E9F /* CreateFolderView.swift in Sources */,
 				342FC43E54620428BAD72D26 /* DocumentPicker.swift in Sources */,
 				4EFD72F5D5D7807B5670FEAB /* EmptyStateView.swift in Sources */,
