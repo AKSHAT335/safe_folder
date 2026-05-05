@@ -85,7 +85,7 @@ enum FileType: String, Codable {
 // MARK: - FileItem Model
 
 /// Represents a single file stored within a folder
-struct FileItem: Identifiable, Codable {
+struct FileItem: Identifiable, Codable, Hashable {
     let id: UUID
     var name: String
     var fileExtension: String

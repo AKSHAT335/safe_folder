@@ -8,9 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var path = NavigationPath()
+    
     var body: some View {
-        NavigationStack {
-            FolderListView()
+        NavigationStack(path: $path) {
+            FolderListView(path: $path)
+                .navigationDestination(for: Folder.self) { folder in
+                    FolderDetailView(folder: folder)
+                }
         }
     }
 }

@@ -35,7 +35,7 @@ enum AuthenticationType: String, Codable, CaseIterable {
 // MARK: - Folder Model
 
 /// Represents a folder that can hold files, optionally secured with authentication
-struct Folder: Identifiable, Codable {
+struct Folder: Identifiable, Codable, Hashable {
     let id: UUID
     var name: String
     var isSecure: Bool
