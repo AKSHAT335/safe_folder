@@ -11,6 +11,7 @@
 		0C33AA1A4666FA01952FA4F2 /* FileThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8E657E8887AB2260A06469 /* FileThumbnailView.swift */; };
 		33F02A0EB0F5A4B13AB2AFE2 /* FolderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA96F55CF6F521A10A80DFEA /* FolderDetailView.swift */; };
 		42DB05B491F25A6B606A4E9F /* CreateFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6A65EC72BC751B3C3D942C /* CreateFolderView.swift */; };
+		479EDD3F8C562F08DAF2CA88 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A0A15239EABF8F6F138D38 /* ImagePicker.swift */; };
 		4EFD72F5D5D7807B5670FEAB /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B952CD222D2E8B716CB3C8F /* EmptyStateView.swift */; };
 		545B31817C03892E5233509D /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3986C11BB42A0F32BD579119 /* KeychainService.swift */; };
 		64D65E2521B03C6BC7213CCD /* FolderListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DEFE3FDDEB029F317779CC /* FolderListView.swift */; };
@@ -35,6 +36,7 @@
 		3EA7DF1AD32B27B9965C4119 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
 		47DEFE3FDDEB029F317779CC /* FolderListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListView.swift; sourceTree = "<group>"; };
 		4B952CD222D2E8B716CB3C8F /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+		65A0A15239EABF8F6F138D38 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		90351D6EEC94DC14061B4757 /* FolderStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderStore.swift; sourceTree = "<group>"; };
 		9B23BBDB4B8C131863DF5810 /* FileItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
 		B646C8C20C8A179EE0802002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				4B952CD222D2E8B716CB3C8F /* EmptyStateView.swift */,
+				65A0A15239EABF8F6F138D38 /* ImagePicker.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				64D65E2521B03C6BC7213CCD /* FolderListView.swift in Sources */,
 				BC5A8854714F2F1F17D78D76 /* FolderRowView.swift in Sources */,
 				02A61924F725373DBD352A3A /* FolderStore.swift in Sources */,
+				479EDD3F8C562F08DAF2CA88 /* ImagePicker.swift in Sources */,
 				545B31817C03892E5233509D /* KeychainService.swift in Sources */,
 				BFAD07EDD9FB446CF19B4F0C /* SafeFolderApp.swift in Sources */,
 				F1569236279FCEDA832A6E8D /* StorageService.swift in Sources */,

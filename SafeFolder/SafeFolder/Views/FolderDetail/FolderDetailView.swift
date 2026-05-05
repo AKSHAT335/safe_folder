@@ -13,6 +13,10 @@ struct FolderDetailView: View {
     @EnvironmentObject var folderStore: FolderStore
     @AppStorage("isGridView") private var isGridView = false
     
+    // File Management State
+    @State private var showAddFileMenu = false
+    @State private var showCamera = false
+    
     var body: some View {
         Group {
             let files = folderStore.files(for: folder.id)
@@ -28,6 +32,11 @@ struct FolderDetailView: View {
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 16) {
                             ForEach(files) { file in
                                 FileGridItemView(file: file, folder: folder)
+                                    .contextMenu {
+                                        Button(role: .destructive) {
+                                            folderStore.deleteFile(file, from: folder.id)
+                                        } label: { Label("Delete", systemImage: "trash") }
+                                    }
                             }
                         }
                         .padding()
@@ -58,14 +67,50 @@ struct FolderDetailView: View {
                     }
                     
                     Button {
-                        // TODO: Implement Add File in Phase 6 (Step 23)
-                        print("Add file")
+                        showAddFileMenu = true
                     } label: {
                         Image(systemName: "plus")
                             .fontWeight(.semibold)
                     }
                 }
             }
+        }
+        .confirmationDialog("Add File", isPresented: $showAddFileMenu) {
+            Button("Camera") {
+                showCamera = true
+            }
+            Button("Photo Library") {
+                // TODO: Step 25
+                print("Open Photo Library")
+            }
+            Button("Files") {
+                // TODO: Step 26
+                print("Open Files")
+            }
+            Button("Cancel", role: .cancel) { }
+        }
+        .fullScreenCover(isPresented: $showCamera) {
+            ImagePicker(sourceType: .camera) { image in
+                saveCapturedImage(image)
+            }
+            .ignoresSafeArea()
+        }
+    }
+    
+    // MARK: - File Handling
+    
+    private func saveCapturedImage(_ image: UIImage) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        let name = "Photo-\(formatter.string(from: Date()))"
+        
+        guard let data = image.jpegData(compressionQuality: 0.8) else { return }
+        
+        do {
+            let fileItem = try StorageService.shared.saveImageData(data, to: folder, withName: name, fileExtension: "jpg")
+            folderStore.addFile(fileItem, to: folder.id)
+        } catch {
+            print("Failed to save image: \(error)")
         }
     }
 }
