@@ -10,6 +10,8 @@
 		02A61924F725373DBD352A3A /* FolderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90351D6EEC94DC14061B4757 /* FolderStore.swift */; };
 		0C33AA1A4666FA01952FA4F2 /* FileThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8E657E8887AB2260A06469 /* FileThumbnailView.swift */; };
 		33F02A0EB0F5A4B13AB2AFE2 /* FolderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA96F55CF6F521A10A80DFEA /* FolderDetailView.swift */; };
+		342FC43E54620428BAD72D26 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E167EEEDE5D7C20DF1B8828C /* DocumentPicker.swift */; };
+		3EAC884BAA406D9D4A3446D2 /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF647A6953D07A083E90DA39 /* PhotoPicker.swift */; };
 		42DB05B491F25A6B606A4E9F /* CreateFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6A65EC72BC751B3C3D942C /* CreateFolderView.swift */; };
 		479EDD3F8C562F08DAF2CA88 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A0A15239EABF8F6F138D38 /* ImagePicker.swift */; };
 		4EFD72F5D5D7807B5670FEAB /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B952CD222D2E8B716CB3C8F /* EmptyStateView.swift */; };
@@ -44,7 +46,9 @@
 		C092BFA200AE6A23AE575A78 /* FolderRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderRowView.swift; sourceTree = "<group>"; };
 		CA769936954D61F4579EC206 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CB6A65EC72BC751B3C3D942C /* CreateFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateFolderView.swift; sourceTree = "<group>"; };
+		CF647A6953D07A083E90DA39 /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		DDBABE8195EB627EDC3DE6D3 /* FileGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileGridItemView.swift; sourceTree = "<group>"; };
+		E167EEEDE5D7C20DF1B8828C /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
 		F277BF0BEAB7FE0ABE4F6429 /* SafeFolder.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SafeFolder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA96F55CF6F521A10A80DFEA /* FolderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderDetailView.swift; sourceTree = "<group>"; };
 		FC621900B865ADEF195BECF0 /* SafeFolderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFolderApp.swift; sourceTree = "<group>"; };
@@ -118,8 +122,10 @@
 		60829D34C6284FBC25ED7666 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E167EEEDE5D7C20DF1B8828C /* DocumentPicker.swift */,
 				4B952CD222D2E8B716CB3C8F /* EmptyStateView.swift */,
 				65A0A15239EABF8F6F138D38 /* ImagePicker.swift */,
+				CF647A6953D07A083E90DA39 /* PhotoPicker.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -254,6 +260,7 @@
 				E3E70D1D5708E2D601EC2E8C /* BiometricAuthService.swift in Sources */,
 				F3A04362DB0C1D6F1C87510D /* ContentView.swift in Sources */,
 				42DB05B491F25A6B606A4E9F /* CreateFolderView.swift in Sources */,
+				342FC43E54620428BAD72D26 /* DocumentPicker.swift in Sources */,
 				4EFD72F5D5D7807B5670FEAB /* EmptyStateView.swift in Sources */,
 				6DA371EFB481210D8961B26E /* FileGridItemView.swift in Sources */,
 				BFFB067153CD5A783315C2DC /* FileItem.swift in Sources */,
@@ -266,6 +273,7 @@
 				02A61924F725373DBD352A3A /* FolderStore.swift in Sources */,
 				479EDD3F8C562F08DAF2CA88 /* ImagePicker.swift in Sources */,
 				545B31817C03892E5233509D /* KeychainService.swift in Sources */,
+				3EAC884BAA406D9D4A3446D2 /* PhotoPicker.swift in Sources */,
 				BFAD07EDD9FB446CF19B4F0C /* SafeFolderApp.swift in Sources */,
 				F1569236279FCEDA832A6E8D /* StorageService.swift in Sources */,
 			);

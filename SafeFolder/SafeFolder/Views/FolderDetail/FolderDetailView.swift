@@ -12,10 +12,16 @@ struct FolderDetailView: View {
     let folder: Folder
     @EnvironmentObject var folderStore: FolderStore
     @AppStorage("isGridView") private var isGridView = false
+    @Environment(\.dismiss) private var dismiss
     
     // File Management State
     @State private var showAddFileMenu = false
     @State private var showCamera = false
+    @State private var showPhotoLibrary = false
+    @State private var showDocumentPicker = false
+    
+    // Auto-Lock Timer State
+    @State private var inactivityTimer: Timer?
     
     var body: some View {
         Group {
@@ -76,17 +82,9 @@ struct FolderDetailView: View {
             }
         }
         .confirmationDialog("Add File", isPresented: $showAddFileMenu) {
-            Button("Camera") {
-                showCamera = true
-            }
-            Button("Photo Library") {
-                // TODO: Step 25
-                print("Open Photo Library")
-            }
-            Button("Files") {
-                // TODO: Step 26
-                print("Open Files")
-            }
+            Button("Camera") { showCamera = true }
+            Button("Photo Library") { showPhotoLibrary = true }
+            Button("Files") { showDocumentPicker = true }
             Button("Cancel", role: .cancel) { }
         }
         .fullScreenCover(isPresented: $showCamera) {
@@ -95,6 +93,45 @@ struct FolderDetailView: View {
             }
             .ignoresSafeArea()
         }
+        .sheet(isPresented: $showPhotoLibrary) {
+            PhotoPicker { images in
+                for image in images {
+                    saveCapturedImage(image)
+                }
+            }
+        }
+        .sheet(isPresented: $showDocumentPicker) {
+            DocumentPicker { urls in
+                for url in urls {
+                    saveDocument(from: url)
+                }
+            }
+        }
+        .onAppear {
+            startAutoLockTimer()
+        }
+        .onDisappear {
+            inactivityTimer?.invalidate()
+        }
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0).onChanged { _ in
+                startAutoLockTimer()
+            }
+        )
+    }
+    
+    // MARK: - Auto-Lock Timer (Step 28)
+    
+    private func startAutoLockTimer() {
+        inactivityTimer?.invalidate()
+        
+        // Only run timer if folder is secure
+        guard folder.isSecure else { return }
+        
+        inactivityTimer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { _ in
+            folderStore.lockFolder(folder.id)
+            dismiss() // Return to folder list
+        }
     }
     
     // MARK: - File Handling
@@ -102,7 +139,7 @@ struct FolderDetailView: View {
     private func saveCapturedImage(_ image: UIImage) {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd-HHmmss"
-        let name = "Photo-\(formatter.string(from: Date()))"
+        let name = "Photo-\(formatter.string(from: Date()))-\(Int.random(in: 100...999))"
         
         guard let data = image.jpegData(compressionQuality: 0.8) else { return }
         
@@ -111,6 +148,18 @@ struct FolderDetailView: View {
             folderStore.addFile(fileItem, to: folder.id)
         } catch {
             print("Failed to save image: \(error)")
+        }
+    }
+    
+    private func saveDocument(from url: URL) {
+        let name = url.deletingPathExtension().lastPathComponent
+        let ext = url.pathExtension
+        
+        do {
+            let fileItem = try StorageService.shared.copyFile(from: url, to: folder, withName: name, fileExtension: ext)
+            folderStore.addFile(fileItem, to: folder.id)
+        } catch {
+            print("Failed to import document: \(error)")
         }
     }
 }
