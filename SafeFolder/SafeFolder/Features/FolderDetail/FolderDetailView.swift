@@ -186,12 +186,9 @@ struct FolderDetailView: View {
         } message: {
             Text("Enter a new name for this folder.")
         }
-        .fullScreenCover(isPresented: $showFilePreview) {
-            if let file = fileToPreview {
-                let url = StorageService.shared.fileURL(for: file, in: folder)
-                FilePreviewView(fileURL: url)
-                    .ignoresSafeArea()
-            }
+        .sheet(item: $fileToPreview) { file in
+            let url = StorageService.shared.fileURL(for: file, in: folder)
+            FilePreviewView(fileURL: url)
         }
         .onAppear {
             startAutoLockTimer()
@@ -209,7 +206,6 @@ struct FolderDetailView: View {
     // MARK: - File Preview
     
     private func previewFile(_ file: FileItem) {
-        let url = StorageService.shared.fileURL(for: file, in: folder)
         guard StorageService.shared.fileExists(file, in: folder) else {
             showError("File not found on disk.")
             return
@@ -226,9 +222,10 @@ struct FolderDetailView: View {
         // Only run timer if folder is secure
         guard folder.isSecure else { return }
         
-        inactivityTimer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { _ in
-            folderStore.lockFolder(folder.id)
-            dismiss() // Return to folder list
+        inactivityTimer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { [folderStore, folder] _ in
+            Task { @MainActor in
+                folderStore.lockFolder(folder.id)
+            }
         }
     }
     

@@ -40,9 +40,21 @@ struct PhotoPicker: UIViewControllerRepresentable {
             parent.presentationMode.wrappedValue.dismiss()
             guard !results.isEmpty else { return }
             
-            // Use a serial queue to safely collect images from concurrent provider callbacks
-            let collectQueue = DispatchQueue(label: "com.safefolder.photopicker.collect")
-            var images: [UIImage] = []
+            // Thread-safe collector to avoid captured var mutation warnings
+            final class ImageCollector: @unchecked Sendable {
+                private let queue = DispatchQueue(label: "com.safefolder.photopicker.collect")
+                private var images: [UIImage] = []
+                
+                func append(_ image: UIImage) {
+                    queue.sync { images.append(image) }
+                }
+                
+                func getAll() -> [UIImage] {
+                    queue.sync { images }
+                }
+            }
+            
+            let collector = ImageCollector()
             let group = DispatchGroup()
             
             for result in results {
@@ -50,9 +62,7 @@ struct PhotoPicker: UIViewControllerRepresentable {
                     group.enter()
                     result.itemProvider.loadObject(ofClass: UIImage.self) { object, error in
                         if let image = object as? UIImage {
-                            collectQueue.sync {
-                                images.append(image)
-                            }
+                            collector.append(image)
                         }
                         group.leave()
                     }
@@ -61,7 +71,7 @@ struct PhotoPicker: UIViewControllerRepresentable {
             
             // Wait for all images to finish loading, then deliver on main thread
             group.notify(queue: .main) {
-                let collected = collectQueue.sync { images }
+                let collected = collector.getAll()
                 if !collected.isEmpty {
                     self.parent.onImagesPicked(collected)
                 }
