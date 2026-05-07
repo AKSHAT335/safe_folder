@@ -40,6 +40,8 @@ struct PhotoPicker: UIViewControllerRepresentable {
             parent.presentationMode.wrappedValue.dismiss()
             guard !results.isEmpty else { return }
             
+            // Use a serial queue to safely collect images from concurrent provider callbacks
+            let collectQueue = DispatchQueue(label: "com.safefolder.photopicker.collect")
             var images: [UIImage] = []
             let group = DispatchGroup()
             
@@ -48,8 +50,7 @@ struct PhotoPicker: UIViewControllerRepresentable {
                     group.enter()
                     result.itemProvider.loadObject(ofClass: UIImage.self) { object, error in
                         if let image = object as? UIImage {
-                            // Safely append to array on main thread
-                            DispatchQueue.main.async {
+                            collectQueue.sync {
                                 images.append(image)
                             }
                         }
@@ -58,10 +59,11 @@ struct PhotoPicker: UIViewControllerRepresentable {
                 }
             }
             
-            // Wait for all images to finish loading from providers
+            // Wait for all images to finish loading, then deliver on main thread
             group.notify(queue: .main) {
-                if !images.isEmpty {
-                    self.parent.onImagesPicked(images)
+                let collected = collectQueue.sync { images }
+                if !collected.isEmpty {
+                    self.parent.onImagesPicked(collected)
                 }
             }
         }

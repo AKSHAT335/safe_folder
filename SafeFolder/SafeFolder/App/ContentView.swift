@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import SwiftUI
 
 struct ContentView: View {
@@ -21,9 +14,8 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { oldPhase, newPhase in
             if newPhase == .background || newPhase == .inactive {
-                // Ensure state is locked
-                folderStore.lockAllSecureFolders()
                 // Pop all views to return to the root folder list
+                // (Locking is handled in SafeFolderApp.swift)
                 path = NavigationPath()
             }
         }

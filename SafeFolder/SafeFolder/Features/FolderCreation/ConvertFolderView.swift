@@ -66,6 +66,11 @@ struct ConvertFolderView: View {
                 showError = true
                 return
             }
+            if password.count < 4 {
+                errorMessage = "Password must be at least 4 characters."
+                showError = true
+                return
+            }
             if password != confirmPassword {
                 errorMessage = "Passwords do not match."
                 showError = true

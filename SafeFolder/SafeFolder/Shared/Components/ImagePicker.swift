@@ -25,7 +25,7 @@ struct ImagePicker: UIViewControllerRepresentable {
             picker.sourceType = sourceType
         } else {
             picker.sourceType = .photoLibrary
-            print("Warning: Requested source type not available. Falling back to Photo Library.")
+            AppLogger.general.warning("Requested camera source type not available. Falling back to Photo Library.")
         }
         
         return picker

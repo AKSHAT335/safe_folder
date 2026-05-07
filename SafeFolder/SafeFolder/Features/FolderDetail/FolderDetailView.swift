@@ -23,6 +23,22 @@ struct FolderDetailView: View {
     // Auto-Lock Timer State
     @State private var inactivityTimer: Timer?
     
+    // Error Alert State
+    @State private var showErrorAlert = false
+    @State private var errorMessage = ""
+    
+    // Delete Confirmation State
+    @State private var fileToDelete: FileItem?
+    @State private var showDeleteConfirmation = false
+    
+    // Rename Folder State
+    @State private var showRenameAlert = false
+    @State private var renameText = ""
+    
+    // File Preview State
+    @State private var fileToPreview: FileItem?
+    @State private var showFilePreview = false
+    
     var body: some View {
         Group {
             let files = folderStore.files(for: folder.id)
@@ -38,9 +54,17 @@ struct FolderDetailView: View {
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 16) {
                             ForEach(files) { file in
                                 FileGridItemView(file: file, folder: folder)
+                                    .onTapGesture {
+                                        previewFile(file)
+                                    }
                                     .contextMenu {
+                                        Button {
+                                            previewFile(file)
+                                        } label: { Label("Preview", systemImage: "eye") }
+                                        
                                         Button(role: .destructive) {
-                                            folderStore.deleteFile(file, from: folder.id)
+                                            fileToDelete = file
+                                            showDeleteConfirmation = true
                                         } label: { Label("Delete", systemImage: "trash") }
                                     }
                             }
@@ -50,12 +74,18 @@ struct FolderDetailView: View {
                 } else {
                     List {
                         ForEach(files) { file in
-                            FileRowView(file: file, folder: folder)
-                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button(role: .destructive) {
-                                        folderStore.deleteFile(file, from: folder.id)
-                                    } label: { Label("Delete", systemImage: "trash") }
-                                }
+                            Button {
+                                previewFile(file)
+                            } label: {
+                                FileRowView(file: file, folder: folder)
+                            }
+                            .buttonStyle(.plain)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    fileToDelete = file
+                                    showDeleteConfirmation = true
+                                } label: { Label("Delete", systemImage: "trash") }
+                            }
                         }
                     }
                     .listStyle(.insetGrouped)
@@ -72,6 +102,24 @@ struct FolderDetailView: View {
                         Image(systemName: isGridView ? "list.bullet" : "square.grid.2x2")
                     }
                     
+                    Menu {
+                        Button {
+                            showAddFileMenu = true
+                        } label: {
+                            Label("Add File", systemImage: "plus")
+                        }
+                        
+                        Button {
+                            renameText = folder.name
+                            showRenameAlert = true
+                        } label: {
+                            Label("Rename Folder", systemImage: "pencil")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                            .fontWeight(.semibold)
+                    }
+                    
                     Button {
                         showAddFileMenu = true
                     } label: {
@@ -86,6 +134,23 @@ struct FolderDetailView: View {
             Button("Photo Library") { showPhotoLibrary = true }
             Button("Files") { showDocumentPicker = true }
             Button("Cancel", role: .cancel) { }
+        }
+        .confirmationDialog(
+            "Delete \"\(fileToDelete?.displayName ?? "this file")\"?",
+            isPresented: $showDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let file = fileToDelete {
+                    folderStore.deleteFile(file, from: folder.id)
+                }
+                fileToDelete = nil
+            }
+            Button("Cancel", role: .cancel) {
+                fileToDelete = nil
+            }
+        } message: {
+            Text("This action cannot be undone.")
         }
         .fullScreenCover(isPresented: $showCamera) {
             ImagePicker(sourceType: .camera) { image in
@@ -107,6 +172,27 @@ struct FolderDetailView: View {
                 }
             }
         }
+        .alert("Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
+        }
+        .alert("Rename Folder", isPresented: $showRenameAlert) {
+            TextField("Folder Name", text: $renameText)
+            Button("Cancel", role: .cancel) { }
+            Button("Save") {
+                renameFolder()
+            }
+        } message: {
+            Text("Enter a new name for this folder.")
+        }
+        .fullScreenCover(isPresented: $showFilePreview) {
+            if let file = fileToPreview {
+                let url = StorageService.shared.fileURL(for: file, in: folder)
+                FilePreviewView(fileURL: url)
+                    .ignoresSafeArea()
+            }
+        }
         .onAppear {
             startAutoLockTimer()
         }
@@ -120,7 +206,19 @@ struct FolderDetailView: View {
         )
     }
     
-    // MARK: - Auto-Lock Timer (Step 28)
+    // MARK: - File Preview
+    
+    private func previewFile(_ file: FileItem) {
+        let url = StorageService.shared.fileURL(for: file, in: folder)
+        guard StorageService.shared.fileExists(file, in: folder) else {
+            showError("File not found on disk.")
+            return
+        }
+        fileToPreview = file
+        showFilePreview = true
+    }
+    
+    // MARK: - Auto-Lock Timer
     
     private func startAutoLockTimer() {
         inactivityTimer?.invalidate()
@@ -134,6 +232,27 @@ struct FolderDetailView: View {
         }
     }
     
+    // MARK: - Rename
+    
+    private func renameFolder() {
+        let trimmed = renameText.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else {
+            showError("Folder name cannot be empty.")
+            return
+        }
+        
+        // Check for duplicate names (exclude current folder)
+        if folderStore.folders.contains(where: { $0.id != folder.id && $0.name.lowercased() == trimmed.lowercased() }) {
+            showError("A folder with this name already exists.")
+            return
+        }
+        
+        var updated = folder
+        updated.name = trimmed
+        updated.modifiedAt = Date()
+        folderStore.updateFolder(updated)
+    }
+    
     // MARK: - File Handling
     
     private func saveCapturedImage(_ image: UIImage) {
@@ -141,13 +260,16 @@ struct FolderDetailView: View {
         formatter.dateFormat = "yyyyMMdd-HHmmss"
         let name = "Photo-\(formatter.string(from: Date()))-\(Int.random(in: 100...999))"
         
-        guard let data = image.jpegData(compressionQuality: 0.8) else { return }
+        guard let data = image.jpegData(compressionQuality: 0.8) else {
+            showError("Failed to process the captured image.")
+            return
+        }
         
         do {
             let fileItem = try StorageService.shared.saveImageData(data, to: folder, withName: name, fileExtension: "jpg")
             folderStore.addFile(fileItem, to: folder.id)
         } catch {
-            print("Failed to save image: \(error)")
+            showError("Failed to save image: \(error.localizedDescription)")
         }
     }
     
@@ -159,7 +281,12 @@ struct FolderDetailView: View {
             let fileItem = try StorageService.shared.copyFile(from: url, to: folder, withName: name, fileExtension: ext)
             folderStore.addFile(fileItem, to: folder.id)
         } catch {
-            print("Failed to import document: \(error)")
+            showError("Failed to import file: \(error.localizedDescription)")
         }
+    }
+    
+    private func showError(_ message: String) {
+        errorMessage = message
+        showErrorAlert = true
     }
 }

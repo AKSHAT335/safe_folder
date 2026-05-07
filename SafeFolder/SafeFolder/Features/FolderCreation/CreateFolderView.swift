@@ -92,6 +92,10 @@ struct CreateFolderView: View {
                 showError(message: "Password cannot be empty.")
                 return
             }
+            if password.count < 4 {
+                showError(message: "Password must be at least 4 characters.")
+                return
+            }
             if password != confirmPassword {
                 showError(message: "Passwords do not match.")
                 return

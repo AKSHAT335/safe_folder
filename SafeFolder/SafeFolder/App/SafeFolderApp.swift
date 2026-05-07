@@ -1,10 +1,3 @@
-//
-//  SafeFolderApp.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import SwiftUI
 
 @main

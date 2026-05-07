@@ -1,10 +1,3 @@
-//
-//  FolderListView.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import SwiftUI
 
 /// Main screen showing all folders
@@ -30,6 +23,17 @@ struct FolderListView: View {
     @State private var folderToConvert: Folder?
     @State private var showConvertSheet = false
     
+    // Delete Confirmation State
+    @State private var folderToDelete: Folder?
+    @State private var showDeleteConfirmation = false
+    
+    // Rename State
+    @State private var folderToRename: Folder?
+    @State private var showRenameAlert = false
+    @State private var renameText = ""
+    @State private var showRenameError = false
+    @State private var renameErrorMessage = ""
+    
     var body: some View {
         Group {
             if folderStore.folders.isEmpty {
@@ -54,8 +58,17 @@ struct FolderListView: View {
                                 Label("Open", systemImage: "folder")
                             }
                             
+                            Button {
+                                folderToRename = folder
+                                renameText = folder.name
+                                showRenameAlert = true
+                            } label: {
+                                Label("Rename", systemImage: "pencil")
+                            }
+                            
                             Button(role: .destructive) {
-                                folderStore.deleteFolder(id: folder.id)
+                                folderToDelete = folder
+                                showDeleteConfirmation = true
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -77,9 +90,10 @@ struct FolderListView: View {
                                 }
                             }
                         }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
-                                folderStore.deleteFolder(id: folder.id)
+                                folderToDelete = folder
+                                showDeleteConfirmation = true
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -117,6 +131,37 @@ struct FolderListView: View {
         }
         .alert("Authentication Failed", isPresented: $showAuthError) {
             Button("OK", role: .cancel) { }
+        }
+        .confirmationDialog(
+            "Delete \"\(folderToDelete?.name ?? "this folder")\"?",
+            isPresented: $showDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let folder = folderToDelete {
+                    folderStore.deleteFolder(id: folder.id)
+                }
+                folderToDelete = nil
+            }
+            Button("Cancel", role: .cancel) {
+                folderToDelete = nil
+            }
+        } message: {
+            Text("This will permanently delete the folder and all its files. This action cannot be undone.")
+        }
+        .alert("Rename Folder", isPresented: $showRenameAlert) {
+            TextField("Folder Name", text: $renameText)
+            Button("Cancel", role: .cancel) { }
+            Button("Save") {
+                renameFolderAction()
+            }
+        } message: {
+            Text("Enter a new name for this folder.")
+        }
+        .alert("Error", isPresented: $showRenameError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(renameErrorMessage)
         }
     }
     
@@ -187,6 +232,28 @@ struct FolderListView: View {
         }
         let updatedFolder = folder.withoutSecurity()
         folderStore.updateFolder(updatedFolder)
+    }
+    
+    private func renameFolderAction() {
+        guard let folder = folderToRename else { return }
+        let trimmed = renameText.trimmingCharacters(in: .whitespaces)
+        
+        guard !trimmed.isEmpty else {
+            renameErrorMessage = "Folder name cannot be empty."
+            showRenameError = true
+            return
+        }
+        
+        if folderStore.folders.contains(where: { $0.id != folder.id && $0.name.lowercased() == trimmed.lowercased() }) {
+            renameErrorMessage = "A folder with this name already exists."
+            showRenameError = true
+            return
+        }
+        
+        var updated = folder
+        updated.name = trimmed
+        updated.modifiedAt = Date()
+        folderStore.updateFolder(updated)
     }
 }
 

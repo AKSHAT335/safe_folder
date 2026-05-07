@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 /// Manages local file storage using FileManager
 /// Handles directory creation, file copying, and metadata persistence
@@ -161,7 +162,7 @@ final class StorageService: @unchecked Sendable {
             let data = try encoder.encode(appData)
             try data.write(to: metadataFileURL, options: .atomicWrite)
         } catch {
-            print("❌ Failed to save metadata: \(error)")
+            AppLogger.storage.error("Failed to save metadata: \(error.localizedDescription)")
         }
     }
     
@@ -187,7 +188,7 @@ final class StorageService: @unchecked Sendable {
             
             return (appData.folders, uuidKeyedFiles)
         } catch {
-            print("❌ Failed to load metadata: \(error)")
+            AppLogger.storage.error("Failed to load metadata: \(error.localizedDescription)")
             return ([], [:])
         }
     }

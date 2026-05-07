@@ -27,7 +27,7 @@ final class BiometricAuthService: @unchecked Sendable {
         do {
             return try await context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason)
         } catch {
-            print("Biometric Auth Failed: \(error.localizedDescription)")
+            AppLogger.auth.error("Biometric Auth Failed: \(error.localizedDescription)")
             return false
         }
     }
