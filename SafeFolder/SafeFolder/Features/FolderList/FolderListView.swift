@@ -34,6 +34,18 @@ struct FolderListView: View {
     @State private var showRenameError = false
     @State private var renameErrorMessage = ""
     
+    // Search State
+    @State private var searchText = ""
+    
+    // Computed property for filtered folders
+    private var filteredFolders: [Folder] {
+        if searchText.isEmpty {
+            return folderStore.folders
+        } else {
+            return folderStore.folders.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        }
+    }
+    
     var body: some View {
         Group {
             if folderStore.folders.isEmpty {
@@ -43,67 +55,68 @@ struct FolderListView: View {
                     iconName: "folder.badge.plus"
                 )
             } else {
-                List {
-                    ForEach(folderStore.folders) { folder in
-                        Button {
-                            openFolder(folder)
-                        } label: {
-                            FolderRowView(folder: folder, fileCount: folderStore.fileCount(for: folder.id))
-                        }
-                        .buttonStyle(.plain)
-                        .contextMenu {
+                if filteredFolders.isEmpty && !searchText.isEmpty {
+                    ContentUnavailableView.search(text: searchText)
+                } else {
+                    List {
+                        ForEach(filteredFolders) { folder in
                             Button {
                                 openFolder(folder)
                             } label: {
-                                Label("Open", systemImage: "folder")
+                                FolderRowView(folder: folder, fileCount: folderStore.fileCount(for: folder.id))
                             }
-                            
-                            Button {
-                                folderToRename = folder
-                                renameText = folder.name
-                                showRenameAlert = true
-                            } label: {
-                                Label("Rename", systemImage: "pencil")
-                            }
-                            
-                            Button(role: .destructive) {
-                                folderToDelete = folder
-                                showDeleteConfirmation = true
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                            
-                            Divider()
-                            
-                            if folder.isSecure {
+                            .buttonStyle(.plain)
+                            .contextMenu {
                                 Button {
-                                    initiateRemoveSecurity(folder)
+                                    openFolder(folder)
                                 } label: {
-                                    Label("Remove Security", systemImage: "lock.open")
+                                    Label("Open", systemImage: "folder")
                                 }
-                            } else {
+                                
                                 Button {
-                                    folderToConvert = folder
-                                    showConvertSheet = true
+                                    folderToRename = folder
+                                    renameText = folder.name
+                                    showRenameAlert = true
                                 } label: {
-                                    Label("Make Secure", systemImage: "lock")
+                                    Label("Rename", systemImage: "pencil")
+                                }
+                                
+                                Button(role: .destructive) {
+                                    folderToDelete = folder
+                                    showDeleteConfirmation = true
+                                } label: { Label("Delete", systemImage: "trash") }
+                                
+                                Divider()
+                                
+                                if folder.isSecure {
+                                    Button {
+                                        initiateRemoveSecurity(folder)
+                                    } label: {
+                                        Label("Remove Security", systemImage: "lock.open")
+                                    }
+                                } else {
+                                    Button {
+                                        folderToConvert = folder
+                                        showConvertSheet = true
+                                    } label: {
+                                        Label("Make Secure", systemImage: "lock")
+                                    }
                                 }
                             }
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(role: .destructive) {
-                                folderToDelete = folder
-                                showDeleteConfirmation = true
-                            } label: {
-                                Label("Delete", systemImage: "trash")
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    folderToDelete = folder
+                                    showDeleteConfirmation = true
+                                } label: { Label("Delete", systemImage: "trash") }
                             }
                         }
                     }
+                    .listStyle(.insetGrouped)
                 }
-                .listStyle(.insetGrouped)
             }
         }
         .navigationTitle("Safe Folders")
+        .searchable(text: $searchText, prompt: "Search folders")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
