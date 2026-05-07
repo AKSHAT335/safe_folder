@@ -1,10 +1,3 @@
-//
-//  Folder.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import Foundation
 
 // MARK: - Authentication Type

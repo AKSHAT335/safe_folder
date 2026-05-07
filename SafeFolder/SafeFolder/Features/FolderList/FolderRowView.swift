@@ -1,10 +1,3 @@
-//
-//  FolderRowView.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import SwiftUI
 
 /// A row component representing a single folder in the list

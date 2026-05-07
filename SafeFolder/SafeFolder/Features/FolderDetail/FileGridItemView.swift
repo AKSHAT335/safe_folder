@@ -1,10 +1,3 @@
-//
-//  FileGridItemView.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import SwiftUI
 
 /// Grid square representing a single file

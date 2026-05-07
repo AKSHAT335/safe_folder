@@ -1,10 +1,3 @@
-//
-//  ConvertFolderView.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import SwiftUI
 
 /// Screen for converting a Normal folder to a Secure folder

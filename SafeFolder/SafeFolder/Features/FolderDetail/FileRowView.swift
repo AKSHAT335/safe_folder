@@ -1,10 +1,3 @@
-//
-//  FileRowView.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import SwiftUI
 
 /// List row representing a single file

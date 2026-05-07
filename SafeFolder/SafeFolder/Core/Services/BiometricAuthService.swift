@@ -1,10 +1,3 @@
-//
-//  BiometricAuthService.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import Foundation
 import LocalAuthentication
 

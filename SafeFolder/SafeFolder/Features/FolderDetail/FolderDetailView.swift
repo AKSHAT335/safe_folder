@@ -1,10 +1,3 @@
-//
-//  FolderDetailView.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import SwiftUI
 
 /// Screen displaying the files within a specific folder

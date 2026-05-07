@@ -1,10 +1,3 @@
-//
-//  FileThumbnailView.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import SwiftUI
 
 /// Reusable thumbnail view for files, showing either the actual image preview or a generic icon
