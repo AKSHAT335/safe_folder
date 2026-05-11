@@ -47,7 +47,7 @@ struct FolderListView: View {
     }
     
     var body: some View {
-        Group {
+        ZStack {
             if folderStore.folders.isEmpty {
                 EmptyStateView(
                     title: "No Folders",
@@ -116,7 +116,7 @@ struct FolderListView: View {
             }
         }
         .navigationTitle("Safe Folders")
-        .searchable(text: $searchText, prompt: "Search folders")
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search folders")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
