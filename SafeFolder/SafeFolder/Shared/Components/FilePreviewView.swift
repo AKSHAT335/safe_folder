@@ -1,9 +1,3 @@
-//
-//  FilePreviewView.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
 
 import SwiftUI
 @preconcurrency import QuickLook

@@ -17,8 +17,7 @@ let package = Package(
             name: "SafeFolder",
             path: "SafeFolder",
             resources: [
-                .process("Resources"),
-                .process("Info.plist")
+                .process("Resources")
             ]
         )
     ]

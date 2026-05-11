@@ -2,8 +2,16 @@ import SwiftUI
 
 /// Screen displaying the files within a specific folder
 struct FolderDetailView: View {
-    let folder: Folder
+    private let initialFolder: Folder
     @EnvironmentObject var folderStore: FolderStore
+    
+    init(folder: Folder) {
+        self.initialFolder = folder
+    }
+    
+    private var folder: Folder {
+        folderStore.folder(withId: initialFolder.id) ?? initialFolder
+    }
     @AppStorage("isGridView") private var isGridView = false
     @Environment(\.dismiss) private var dismiss
     

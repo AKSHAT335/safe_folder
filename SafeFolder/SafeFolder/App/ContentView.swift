@@ -15,7 +15,6 @@ struct ContentView: View {
         .onChange(of: scenePhase) { oldPhase, newPhase in
             if newPhase == .background || newPhase == .inactive {
                 // Pop all views to return to the root folder list
-                // (Locking is handled in SafeFolderApp.swift)
                 path = NavigationPath()
             }
         }

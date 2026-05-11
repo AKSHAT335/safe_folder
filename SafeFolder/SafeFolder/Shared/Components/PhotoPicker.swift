@@ -1,10 +1,3 @@
-//
-//  PhotoPicker.swift
-//  SafeFolder
-//
-//  Created for iOS Internship Assignment
-//
-
 import SwiftUI
 import PhotosUI
 

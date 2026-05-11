@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build iOS App",
+			"type": "shell",
+			"command": "xcodebuild",
+			"args": [
+				"-project",
+				"SafeFolder/SafeFolder.xcodeproj",
+				"-configuration",
+				"Debug",
+				"-destination",
+				"generic/platform=iOS Simulator"
+			],
+			"group": "build"
+		}
+	]
+}
